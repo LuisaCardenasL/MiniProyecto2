@@ -3,6 +3,8 @@ package miniproyecto2;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,8 +13,8 @@ import javax.swing.JPanel;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
- *
- * @author Lu
+ * @author Luisa Maria Cardenas Lopez - 1823494 - cardenas.luisa@correounivalle.edu.co
+ * @author Alejandro Tapiero Triana - 202043737 - alejandro.tapiero@correounivalle.edu.co
  */
 public class GUI extends JFrame{
     private BotonesPareja bPareja[];
@@ -91,8 +93,26 @@ public class GUI extends JFrame{
         add(pNorte, BorderLayout.NORTH);
         add(pCentro, BorderLayout.CENTER);
         
+        bOpcion1.setEnabled(false);
+        bOpcion2.setEnabled(false);
+        bOpcion3.setEnabled(false);
+        bOpcion4.setEnabled(false);
+        for(int i = 0; i<bPareja.length; i++){
+            bPareja[i].setEnabled(false);
+        }
         
-        
+        //escuchas
+        ManejaEventos evento = new ManejaEventos();
+        bAyuda.addActionListener(evento);
+        bSalir.addActionListener(evento);
+        bInicio.addActionListener(evento);
+        bOpcion1.addActionListener(evento);
+        bOpcion2.addActionListener(evento);
+        bOpcion3.addActionListener(evento);
+        bOpcion4.addActionListener(evento);
+        for(int i = 0; i<bPareja.length; i++){
+            bPareja[i].addActionListener(evento);
+        }
     }
 
     /**
@@ -100,6 +120,30 @@ public class GUI extends JFrame{
      */
     public static void main(String[] args) {
         GUI obj = new GUI();
+    }
+    
+    /**
+     * Metodo para limpiar la GUI y dejarla como se encontraba inicialmente antes de jugar
+     */
+    public void limpiarGUI (){
+        lAciertos.setText("");
+        lFallas.setText("");
+        lOportunidades.setText("");
+        bOpcion1.setEnabled(false);
+        bOpcion2.setEnabled(false);
+        bOpcion3.setEnabled(false);
+        bOpcion4.setEnabled(false);
+        for(int i = 0; i<bPareja.length; i++){
+            bPareja[i].setEnabled(false);
+        }
+    }
+    
+    class ManejaEventos implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        }
+        
     }
     
 }
