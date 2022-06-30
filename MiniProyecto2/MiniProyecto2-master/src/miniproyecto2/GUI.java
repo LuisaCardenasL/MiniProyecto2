@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -22,7 +23,8 @@ public class GUI extends JFrame{
     private JLabel lFallas, lOportunidades, lAciertos;
     private JPanel pNorte, pCentro, pMenu, pOpciones, pParejas, pAyudaJuego, pMenuNorte, pMenuSur;
     /*private ArrayList baraja1, baraja2, baraja3, baraja4;//Baraja con todas las cartas*/
-    private int caraCarta, numeroCartas, numeroParejas;
+    private int caraCarta, numeroCartas, numeroParejas, numeroJugadas, cartaRevelada, pareja, bandera, juego, aciertos, fallas;
+    private ArrayList<Integer> jugadaUsuario, almacenParejas;
     
     
     /**
@@ -31,6 +33,8 @@ public class GUI extends JFrame{
     public GUI()
     {
         initComponents();
+        jugadaUsuario = new ArrayList<>();
+        almacenParejas = new ArrayList<>();
         //contruccion del frame
         setTitle("Juego Concentrese");
         setSize(700,400);
@@ -38,11 +42,13 @@ public class GUI extends JFrame{
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
     }
    
     //inicializar componentes
     private void initComponents(){
         numeroCartas = 16;
+        numeroJugadas = 0;
         bPareja = new BotonesPareja[numeroCartas];
         bAyuda = new JButton("Ayuda");
         bInicio = new JButton("Iniciar");
@@ -52,8 +58,8 @@ public class GUI extends JFrame{
         bOpcion3 = new JButton("Opcion 3");
         bOpcion4 = new JButton("Opcion 4");
         
-        lFallas = new JLabel("Fallas: ");
-        lAciertos = new JLabel("Aciertos: ");
+        lFallas = new JLabel("Fallas: " + fallas);
+        lAciertos = new JLabel("Aciertos: " + aciertos);
         lOportunidades = new JLabel("Oportunidades: ");
         
         pNorte = new JPanel(new GridLayout(1,2));
@@ -98,33 +104,26 @@ public class GUI extends JFrame{
         add(pCentro, BorderLayout.CENTER);
         
     }
-    
-    /*private void agregarPareja() { //Nota de Ale: Realmente esto se puede quitar porque es un ejemplo con arraylists, pero sé que se puede manejar con botones, como ya hiciste arriba
-        int aleatorio;//Para seleccionar la posición en el array de parejas
-        String nuevaCarta;
-        for (int i = 0; i < NUM_CARTAS / 2; i++) {//HAY QUE HACER NUM_CARTAS/2 PARES
-            //Se genera la nueva carta
-            nuevaCarta = generarCartaNoUsada();
-            //Se busca una posición libre en parejas y se agrega la carta (2 veces)
-            for (int j = 0; j < 2; j++) {
-                do {
-                    aleatorio = (int) (Math.random() * NUM_CARTAS);
-                    if (parejas.get(aleatorio) == null) {
-                        parejas.set(aleatorio, nuevaCarta);
-                        break;
-                    }
-                } while (parejas.get(aleatorio) != null);
-            }
-        }
-    }
-    */
 
+    /*private void juego(){
+        
+    }*/
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         GUI obj = new GUI();
+    }
+    
+    /**
+     * Metodo para limpiar la GUI y dejarla como se encontraba inicialmente antes de jugar
+     */
+    public void limpiarGUI (){
+        jugadaUsuario.clear();
+        lFallas.setText("");
+        lOportunidades.setText("");
+        lAciertos.setText("");
     }
     
     class manejadoraEventos implements ActionListener, MouseListener{
@@ -136,72 +135,54 @@ public class GUI extends JFrame{
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            /*int posicion = ((Carta) e.getComponent()).getPos();
-                    if (estado[posicion] == REVERSO) {
-                        estado[posicion] = ANVERSO; //Voltear la carta. Nota de Ale: Me imagino que en vez del estado[posición], será con un cambio de imagen, y creo que un boolean o un flag a cada carta individual de si está "volteada" o no.
-                        ((JLabel) e.getComponent()).setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/" + parejas.get(posicion))));
-                        if (primeraJLabel == null) { 
-                            //Ha levantado la primera carta
-                            primeraJLabel = (JLabel) e.getComponent();
-                            primeraNombre = parejas.get(posicion);
-                            primeraIndice = posicion;
-                        } else {
-                            //Ha levantado la segunda carta
-                            if (!parejas.get(posicion).equals(primeraNombre)) {
-                                //No hay pareja, esperamos y damos la vuelta
-                                new Thread() {
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(4000); //Los 4 segundos que permanece la carta expuesta
-                                            ((JLabel) e.getComponent()).setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/back.gif")));
-                                            primeraJLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/back.gif")));
-                                            primeraJLabel = null;
-                                            primeraNombre = null;
-                                            primeraIndice = -1;
-                                        } catch (InterruptedException ex) {
-                                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-                                    }
-                                }.start();
-                                //Las dejo en estado REVERSO (Nota de Ale: Por esto decía lo de poner booleano o flag)
-                                estado[posicion] = REVERSO;
-                                estado[primeraIndice] = REVERSO;
-                            } else {
-                                //Hay pareja. Hacemos reset y contamos +1
-                                primeraJLabel = null;
-                                primeraNombre = null;
-                                primeraIndice = -1;
-                                numeroParejas++;
-                                if (numeroParejas==numeroCartas/2){
-                                    /*JOptionPane.showMessageDialog(PantallaJuego.this,"¡ENHORABUENA!", 
-                                    "EmparejadosJ23", JOptionPane.INFORMATION_MESSAGE);*/ //Nota de Ale: Declaración de victoria.
-                                /*}
+            if(e.getSource() == bInicio){
+                
+                //desactivar boton iniciar
+                bInicio.setEnabled(false);
+                
+                //iniciar juego
+                //juego(2);
+                
+                for (int i = 0; i < bPareja.length; i++){
+                if (e.getSource() == bPareja[i] && cartaRevelada != 1) {
+                    numeroJugadas++;//si se presiona 2 veces seguidas un label, se incrementa la posicion del arreglo
+                    //bPareja[i] = 1;   //Voltear las cartas
+                        if (numeroJugadas == 2){
+                            if (bPareja[i] == bPareja[i]){
+                                aciertos++;
                             }
-                            
+                            else
+                            {
+                                //bPareja[i] = 0;   //Voltear las cartas
+                                fallas++;
+                            }
                         }
-                    }*/
+                    }
+                } 
+            }
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
-    
+                
     }
+
     
 }
