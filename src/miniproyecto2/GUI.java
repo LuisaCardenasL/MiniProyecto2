@@ -1,8 +1,6 @@
 package miniproyecto2;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,9 +44,9 @@ public class GUI extends JFrame{
     //inicializar componentes
     private void initComponents(){
         bPareja = new BotonesPareja[16];
-        bAyuda = new JButton("    Ayuda    ");
+        bAyuda = new JButton("     Ayuda     ");
         bInicio = new JButton("Iniciar");
-        bSalir = new JButton("      Salir      ");
+        bSalir = new JButton("      Salir       ");
         
         bAyuda.setBorder(null);
         bSalir.setBorder(null);
