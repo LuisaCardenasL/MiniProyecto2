@@ -4,12 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -18,7 +22,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
  * @author Alejandro Tapiero Triana - 202043737 - alejandro.tapiero@correounivalle.edu.co
  */
 public class GUI extends JFrame{
-    private BotonesPareja bPareja[];
+    private BotonesPareja bPareja[], bmPareja[][];
     private JButton bAyuda, bInicio, bSalir;
     private JLabel lFallas, lOportunidades, lAciertos;
     private JPanel pNorte, pJuego, pSur, pOpciones, pInicio;
@@ -35,7 +39,7 @@ public class GUI extends JFrame{
         //contruccion del frame
         setTitle("Juego Concentrese");
         setSize(700,400);
-        setResizable(false);
+        //setResizable(false);
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -64,12 +68,22 @@ public class GUI extends JFrame{
         pSur = new JPanel(new GridLayout(1,3));
         pOpciones = new JPanel(new GridLayout(1,1));
         pInicio = new JPanel(new GridLayout(1,2));
-        
+    
+        /*
         for (int i =0; i < bPareja.length; i++)
         {
             bPareja[i] = new BotonesPareja(i);
             pJuego.add(bPareja[i]);
-        }
+        }*/
+        
+        bmPareja = new BotonesPareja[4][4];
+        for (int i =0; i < 4; i++)
+            for (int j =0; j < 4; j++)
+                {
+                    bmPareja[i][j] = new BotonesPareja(i);
+                    bmPareja[i][j].setIcon(new ImageIcon("src/imagenes/0.png"));
+                    pJuego.add(bmPareja[i][j]);
+                }
         
         menuBar = new JMenuBar();
         
@@ -94,19 +108,30 @@ public class GUI extends JFrame{
         add(pNorte, BorderLayout.NORTH);
         add(pJuego, BorderLayout.CENTER);
         add(pSur, BorderLayout.SOUTH);
-        
+        for (int i =0; i < 4; i++)
+            for (int j =0; j < 4; j++)
+                {
+                    bmPareja[i][j].setEnabled(false);
+                }
+        /*
         for(int i = 0; i<bPareja.length; i++){
             bPareja[i].setEnabled(false);
-        }
+        }*/
         
         //escuchas
         ManejaEventos evento = new ManejaEventos();
         bAyuda.addActionListener(evento);
         bSalir.addActionListener(evento);
         bInicio.addActionListener(evento);
+        for (int i =0; i < 4; i++)
+            for (int j =0; j < 4; j++)
+                {
+                    bmPareja[i][j].addActionListener(evento);
+                }
+        /*
         for(int i = 0; i<bPareja.length; i++){
             bPareja[i].addActionListener(evento);
-        }
+        }*/
     }
 
     /**
@@ -123,15 +148,67 @@ public class GUI extends JFrame{
         lAciertos.setText("");
         lFallas.setText("");
         lOportunidades.setText("");
+        for (int i =0; i < 4; i++)
+            for (int j =0; j < 4; j++)
+                {
+                    bmPareja[i][j].setEnabled(false);
+                }
+        /*
         for(int i = 0; i<bPareja.length; i++){
             bPareja[i].setEnabled(false);
-        }
+        }*/
     }
     
-    class ManejaEventos implements ActionListener{
+    class ManejaEventos implements ActionListener, MouseListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(e.getSource()==bInicio){
+                String seleccionOpcion = "";
+                
+                seleccionOpcion = cbTemas.getSelectedItem().toString();
+                
+                for (int i =0; i < 4; i++)
+                    for (int j =0; j < 4; j++)
+                        {
+                            if(seleccionOpcion.equals("Seleccione una opcion")){
+                                //JOptionPane.showInputDialog(null, "Por favor seleccione un tema para iniciar");
+                            }else{
+                                bmPareja[i][j].setIcon(new ImageIcon("src/imagenes/"+seleccionOpcion+".png"));
+                            }
+                        }
+                
+                for (int i =0; i < 4; i++)
+                    for (int j =0; j < 4; j++)
+                        {
+                            bmPareja[i][j].setEnabled(true);
+                        }
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
         
     }
