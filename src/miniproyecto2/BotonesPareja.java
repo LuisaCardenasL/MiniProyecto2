@@ -25,8 +25,4 @@ public class BotonesPareja extends JButton{
     public int getID(){
         return idBoton;
     }
-
-    public void setId(int idBoton) {
-        this.idBoton = idBoton;
-    }
 }

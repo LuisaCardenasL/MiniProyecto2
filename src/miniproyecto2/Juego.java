@@ -3,39 +3,36 @@ package miniproyecto2;
 import java.util.Random;
 
 /**
- * @author Luisa Maria Cardenas Lopez - 1823494 - cardenas.luisa@correounivalle.edu.co
- * @author Alejandro Tapiero Triana - 202043737 - alejandro.tapiero@correounivalle.edu.co
+ *
+ * @author Lu
  */
 public class Juego {
-    private int cartasEnJuego[] = new int[16];
-    private int cartasPareja[] = new int[8];
-    
-    public Juego(){
-    }
-        
+    int mat [][] = new int [4][4];
+    Random random;
+
     private void cartasAleatorio(){
-        cartasID(cartasEnJuego);
-        cartasID(cartasPareja);
-        
-        int nuevoID;
-        Random aleatorio = new Random();
-        
-        for (int i = 0; i < cartasEnJuego.length; i++){
-            nuevoID = aleatorio.nextInt(8)+1;
-            
-            if(cartasPareja[nuevoID] < 2){
-                cartasEnJuego[i] = nuevoID;
-                cartasPareja[nuevoID]++;
-            }else{
-                i--;
+        int acumulador = 0;
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++){
+                mat[i][j] = 0;
+        }
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++){
+                mat[i][j] = random.nextInt(8)+1;
+
+                do{
+                    acumulador = 0;
+                    for (int k = 0; k < 4; k++)
+                        for (int l = 0; l < 4; l++){
+                                if(mat[i][j] == mat[k][l]){
+                                    acumulador +=1;
+                                }
+                            }
+                if(acumulador == 3){
+                    mat[i][j] = random.nextInt(8)+1;
+                }
+                }while (acumulador == 0);
             }
         }
-    }
-    
-    private void cartasID(int [] cartas){
-        for(int i = 0; i<cartas.length; i++){
-            cartas[i]=0;
-        }
-    }
 }
-
