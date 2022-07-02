@@ -1,44 +1,41 @@
 package miniproyecto2;
 
 import java.util.Random;
-import java.util.random.RandomGenerator;
 
 /**
- *
- * @author Lu
+ * @author Luisa Maria Cardenas Lopez - 1823494 - cardenas.luisa@correounivalle.edu.co
+ * @author Alejandro Tapiero Triana - 202043737 - alejandro.tapiero@correounivalle.edu.co
  */
 public class Juego {
-    int matriz [][] = new int [4][4];
-    Random random;
+    private int cartasEnJuego[] = new int[16];
+    private int cartasPareja[] = new int[8];
     
-    /**
-     * Este metodo se ultiliza para obtener aleatorianmente las cartas y que estas aparezcan en diferentes lugares
-     * Tambien se utiliza para que aparezcan dos veces la misma carta
-     */
-    private void cartasAleatorio(){
-        int acumulador = 0;
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++){
-                matriz[i][j] = 0;
-        }
+    public Juego(){
+    }
         
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++){
-                matriz[i][j] = random.nextInt(8)+1;
-                
-                do{
-                    acumulador = 0;
-                    for (int k = 0; k < 4; k++)
-                        for (int l = 0; l < 4; l++){
-                                if(matriz[i][j] == matriz[k][l]){
-                                    acumulador +=1;
-                                }
-                            }
-                if(acumulador == 3){
-                    matriz[i][j] = random.nextInt(8)+1;
-                }
-                }while (acumulador == 0);
+    private void cartasAleatorio(){
+        cartasID(cartasEnJuego);
+        cartasID(cartasPareja);
+        
+        int nuevoID;
+        Random aleatorio = new Random();
+        
+        for (int i = 0; i < cartasEnJuego.length; i++){
+            nuevoID = aleatorio.nextInt(8)+1;
+            
+            if(cartasPareja[nuevoID] < 2){
+                cartasEnJuego[i] = nuevoID;
+                cartasPareja[nuevoID]++;
+            }else{
+                i--;
             }
         }
+    }
+    
+    private void cartasID(int [] cartas){
+        for(int i = 0; i<cartas.length; i++){
+            cartas[i]=0;
+        }
+    }
 }
 

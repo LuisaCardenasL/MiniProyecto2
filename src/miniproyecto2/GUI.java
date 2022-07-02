@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
+import java.util.Timer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,17 +24,17 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
  * @author Alejandro Tapiero Triana - 202043737 - alejandro.tapiero@correounivalle.edu.co
  */
 public class GUI extends JFrame{
-    private BotonesPareja bPareja[], bmPareja[][];
+    private BotonesPareja bPareja[];
     private JButton bAyuda, bInicio, bSalir;
     private JLabel lFallas, lOportunidades, lAciertos;
     private JPanel pNorte, pJuego, pSur, pOpciones, pInicio;
     private JComboBox cbTemas;
     private JMenuBar menuBar;
     private JMenu menuOpciones;
+    private int cartasEnJuego[] = new int[16];
+    private int cartasPareja[] = new int[8];
+
     
-    /**
-     * Constructor de la clase
-     */
     public GUI()
     {
         initComponents();
@@ -47,10 +49,11 @@ public class GUI extends JFrame{
    
     //inicializar componentes
     private void initComponents(){
-        bPareja = new BotonesPareja[16];
+        
         bAyuda = new JButton("     Ayuda     ");
         bInicio = new JButton("Iniciar");
         bSalir = new JButton("      Salir       ");
+        bPareja = new BotonesPareja[16];
         
         bAyuda.setBorder(null);
         bSalir.setBorder(null);
@@ -69,21 +72,12 @@ public class GUI extends JFrame{
         pOpciones = new JPanel(new GridLayout(1,1));
         pInicio = new JPanel(new GridLayout(1,2));
     
-        /*
+        
         for (int i =0; i < bPareja.length; i++)
         {
             bPareja[i] = new BotonesPareja(i);
             pJuego.add(bPareja[i]);
-        }*/
-        
-        bmPareja = new BotonesPareja[4][4];
-        for (int i =0; i < 4; i++)
-            for (int j =0; j < 4; j++)
-                {
-                    bmPareja[i][j] = new BotonesPareja(i);
-                    bmPareja[i][j].setIcon(new ImageIcon("src/imagenes/0.png"));
-                    pJuego.add(bmPareja[i][j]);
-                }
+        }
         
         menuBar = new JMenuBar();
         
@@ -108,30 +102,19 @@ public class GUI extends JFrame{
         add(pNorte, BorderLayout.NORTH);
         add(pJuego, BorderLayout.CENTER);
         add(pSur, BorderLayout.SOUTH);
-        for (int i =0; i < 4; i++)
-            for (int j =0; j < 4; j++)
-                {
-                    bmPareja[i][j].setEnabled(false);
-                }
-        /*
+        
         for(int i = 0; i<bPareja.length; i++){
             bPareja[i].setEnabled(false);
-        }*/
+        }
         
         //escuchas
         ManejaEventos evento = new ManejaEventos();
         bAyuda.addActionListener(evento);
         bSalir.addActionListener(evento);
         bInicio.addActionListener(evento);
-        for (int i =0; i < 4; i++)
-            for (int j =0; j < 4; j++)
-                {
-                    bmPareja[i][j].addActionListener(evento);
-                }
-        /*
         for(int i = 0; i<bPareja.length; i++){
             bPareja[i].addActionListener(evento);
-        }*/
+        }
     }
 
     /**
@@ -148,69 +131,71 @@ public class GUI extends JFrame{
         lAciertos.setText("");
         lFallas.setText("");
         lOportunidades.setText("");
-        for (int i =0; i < 4; i++)
-            for (int j =0; j < 4; j++)
-                {
-                    bmPareja[i][j].setEnabled(false);
-                }
-        /*
         for(int i = 0; i<bPareja.length; i++){
             bPareja[i].setEnabled(false);
-        }*/
+        }
     }
     
     class ManejaEventos implements ActionListener, MouseListener{
-
+        
+        Timer tiempoEspera;
+        Juego juego;
+        
+        public ManejaEventos(){
+            juego = new Juego();
+        }
+        
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==bInicio){
+                
                 String seleccionOpcion = "";
                 
                 seleccionOpcion = cbTemas.getSelectedItem().toString();
                 
-                for (int i =0; i < 4; i++)
-                    for (int j =0; j < 4; j++)
-                        {
-                            if(seleccionOpcion.equals("Seleccione una opcion")){
-                                //JOptionPane.showInputDialog(null, "Por favor seleccione un tema para iniciar");
-                            }else{
-                                bmPareja[i][j].setIcon(new ImageIcon("src/imagenes/"+seleccionOpcion+".png"));
-                            }
-                        }
-                
-                for (int i =0; i < 4; i++)
-                    for (int j =0; j < 4; j++)
-                        {
-                            bmPareja[i][j].setEnabled(true);
-                        }
+                if(seleccionOpcion.equals("Seleccione una opcion")){
+                    
+                }else{
+                    for(int i = 0; i<bPareja.length; i++){
+                        bPareja[i].setIcon(new ImageIcon("src/imagenes/"+seleccionOpcion+"/"+2+".png"));
+                        bInicio.setEnabled(false);
+                        cbTemas.setEnabled(false);
+                        bPareja[i].setEnabled(true);
+                    }
+                }
+            }
+            if (e.getSource()==bSalir) {
+                JOptionPane.showMessageDialog(null, "Seguro que quieres salir");
+                System.exit(0);
+            }
+            if (e.getSource()== bAyuda) {
+                JOptionPane.showMessageDialog(null, "Concentrese:\n"+
+                                                    "Es un juego de memoria donde tendras 4 segundos para observar las imagenes\n"+
+                                                    "Una vez pasado este tiempo tienes 4 oportunidades para encontrar su pareja\n"+
+                                                    "De equivocarte las 4 veces perderas, pero tranquilo si pierdes puedes volver a intentarlo \n"+
+                                                    "Buena suerte.");
             }
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
-        
     }
-    
 }

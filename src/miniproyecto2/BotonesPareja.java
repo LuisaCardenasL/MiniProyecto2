@@ -21,7 +21,12 @@ public class BotonesPareja extends JButton{
      * Metodo que nos sirve para obtener cual es el identificador del boton
      * @return identificador del boton
      */
+    
     public int getID(){
         return idBoton;
+    }
+
+    public void setId(int idBoton) {
+        this.idBoton = idBoton;
     }
 }
